@@ -17,10 +17,10 @@ public class User implements Serializable{
     private String password;
     private char gender; // M,F
     private char role; // A, U
-    private static int lastId = 1;
+   
     
     public User(String login, String name, String password, char gender, char role) {
-        this(User.lastId++, login, name, password, gender, role);
+        this(-1, login, name, password, gender, role);
    
     }
     public User(int id, String login, String name, String password, char gender, char role) {
@@ -80,13 +80,6 @@ public class User implements Serializable{
         this.role = role;
     }
 
-    public static int getLastId() {
-        return lastId;
-    }
-
-    public static void setLastId(int lastId) {
-        User.lastId = lastId;
-    }
 
     @Override
     public String toString() {
