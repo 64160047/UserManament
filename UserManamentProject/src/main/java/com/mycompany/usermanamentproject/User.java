@@ -4,11 +4,13 @@
  */
 package com.mycompany.usermanamentproject;
 
+import java.io.Serializable;
+
 /**
  *
  * @author minnie
  */
-public class User {
+public class User implements Serializable{
     private int id;
     private String login;
     private String name;
@@ -21,7 +23,6 @@ public class User {
         this(User.lastId++, login, name, password, gender, role);
    
     }
-
     public User(int id, String login, String name, String password, char gender, char role) {
         this.id = id;
         this.login = login;
@@ -30,6 +31,69 @@ public class User {
         this.gender = gender;
         this.role = role;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public char getGender() {
+        return gender;
+    }
+
+    public void setGender(char gender) {
+        this.gender = gender;
+    }
+
+    public char getRole() {
+        return role;
+    }
+
+    public void setRole(char role) {
+        this.role = role;
+    }
+
+    public static int getLastId() {
+        return lastId;
+    }
+
+    public static void setLastId(int lastId) {
+        User.lastId = lastId;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" + "id=" + id + ", login=" + login + ", name=" + name + ", password=" + password + ", gender=" + gender + ", role=" + role + '}';
+    }
+
+    
 
     
    
