@@ -13,6 +13,7 @@ import javax.swing.table.AbstractTableModel;
 public class UserFrame extends javax.swing.JFrame {
 
     private final AbstractTableModel model;
+    private int userEditedIndex = -1;
 
     /**
      * Creates new form UserFrame
@@ -83,6 +84,7 @@ public class UserFrame extends javax.swing.JFrame {
             
         };
         tableUsers.setModel(model);
+        enbleForm(false);
     }
 
     /**
@@ -97,7 +99,7 @@ public class UserFrame extends javax.swing.JFrame {
         bgGender = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        lblUserId = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         txtLogin = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
@@ -123,8 +125,8 @@ public class UserFrame extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Hiragino Mincho ProN", 1, 14)); // NOI18N
         jLabel1.setText("ID");
 
-        jLabel2.setFont(new java.awt.Font("Hiragino Mincho ProN", 1, 14)); // NOI18N
-        jLabel2.setText("0000000");
+        lblUserId.setFont(new java.awt.Font("Hiragino Mincho ProN", 1, 14)); // NOI18N
+        lblUserId.setText("-1");
 
         jLabel3.setFont(new java.awt.Font("Hiragino Mincho ProN", 1, 14)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -170,6 +172,11 @@ public class UserFrame extends javax.swing.JFrame {
         btnClear.setBackground(new java.awt.Color(236, 107, 107));
         btnClear.setFont(new java.awt.Font("Hiragino Mincho ProN", 1, 14)); // NOI18N
         btnClear.setText("Clear");
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -182,7 +189,7 @@ public class UserFrame extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblUserId, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(32, 32, 32)
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -218,7 +225,7 @@ public class UserFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel2)
+                    .addComponent(lblUserId)
                     .addComponent(jLabel3)
                     .addComponent(txtLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
@@ -327,23 +334,79 @@ public class UserFrame extends javax.swing.JFrame {
         }
         User newUser = new User(login, name, password, gender, role);
         System.out.println(newUser);
+        if(userEditedIndex<0){
+            userService.addUser(newUser);
+        }else {
+            userService.updateUser(userEditedIndex, newUser);
+            userEditedIndex = -1;
+        }
+        
+        model.fireTableDataChanged();
+        userService.logUserList();
+        clearForm();
+        enbleForm(false);
 
 
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-     int index = tableUsers.getSelectedRow();
-     System.out.println(userService.getUser(index));
+     userEditedIndex = tableUsers.getSelectedRow();
+     User editedUser = userService.getUser(userEditedIndex);
+     enbleForm(true);
+     txtLogin.setText(editedUser.getLogin());
+     txtName.setText(editedUser.getName());
+     txtPassword.setText(editedUser.getPassword());
+     if(editedUser.getRole() == 'A') {
+         cbRole.setSelectedIndex(0);
+     }else{
+         cbRole.setSelectedIndex(1);
+         
+     }
+     if(editedUser.getGender() == 'M') {
+         rdMale.setSelected(true);
+     } else{
+         rdFemale.setSelected(false);
+     }
+     lblUserId.setText(""+editedUser.getId());
+     System.out.println(userService.getUser(userEditedIndex));
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        // TODO add your handling code here:
+      int index = tableUsers.getSelectedRow();
+      userService.deleteUser(index);
+      model.fireTableDataChanged();
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnAddNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddNewActionPerformed
-        // TODO add your handling code here:
+      enbleForm(true);
+      txtLogin.requestFocus();
     }//GEN-LAST:event_btnAddNewActionPerformed
 
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        clearForm();
+    }//GEN-LAST:event_btnClearActionPerformed
+
+    private void clearForm() {
+        txtLogin.setText("");
+        txtPassword.setText("");
+        txtName.setText("");
+        cbRole.setSelectedIndex(0);
+        rdMale.setSelected(true);
+        txtLogin.requestFocus();
+        lblUserId.setText("-1");
+    }
+      private void enbleForm(boolean isEnable) {
+        txtLogin.setEnabled(isEnable);
+        txtPassword.setEnabled(isEnable);
+        txtName.setEnabled(isEnable);
+        cbRole.setEnabled(isEnable);
+        rdMale.setEnabled(isEnable);
+        rdFemale.setEnabled(isEnable);
+        btnSave.setEnabled(isEnable);
+        btnClear.setEnabled(isEnable);
+        
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -388,13 +451,13 @@ public class UserFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnSave;
     private javax.swing.JComboBox<String> cbRole;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblUserId;
     private javax.swing.JRadioButton rdFemale;
     private javax.swing.JRadioButton rdMale;
     private javax.swing.JTable tableUsers;

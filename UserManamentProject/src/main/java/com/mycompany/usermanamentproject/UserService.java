@@ -37,4 +37,25 @@ public class UserService {
         return userList.size();
     }
 
+    public void logUserList() {
+        for (User u : userList) {
+            System.out.println(u);
+        }
+    }
+
+    User updateUser(int index, User updatedUser) {
+        User user = userList.get(index);
+        user.setLogin(updatedUser.getLogin());
+        user.setName(updatedUser.getName());
+        user.setPassword(updatedUser.getPassword());
+        user.setGender(updatedUser.getGender());
+        user.setRole(updatedUser.getRole());
+        return user;
+    }
+
+    User deleteUser(int index) {
+       return  userList.remove(index);
+       
+    }
+
 }
